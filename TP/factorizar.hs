@@ -24,10 +24,11 @@ posibles_factores :: Integer -> [Integer]
 posibles_factores n = filter es_primo (dos_a_mitad n)
 
 es_primo :: Integer -> Bool
+es_primo n | n==1 = False
 es_primo n = son_coprimos_a n (dos_a_mitad n)
 
 veces_divisible_por :: Integer -> Integer -> Integer
-veces_divisible_por 1 n = n
+veces_divisible_por 1 n = undefined
 veces_divisible_por p n = if (mod n p) == 0
 					      then 1 + veces_divisible_por p (floor(n % p))
 					      else 0
@@ -39,5 +40,7 @@ no_nulo :: (Integer, Integer) -> Bool
 no_nulo a = snd a /= 0
 
 factorizar :: Integer -> [(Integer, Integer)]
+factorizar n | n<1 = undefined
+factorizar n | es_primo n =  map (factor n) [n]
 factorizar n = filter no_nulo (map (factor n) (posibles_factores n))
 
