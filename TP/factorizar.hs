@@ -24,7 +24,7 @@ posibles_factores :: Integer -> [Integer]
 posibles_factores n = filter es_primo (dos_a_mitad n)
 
 es_primo :: Integer -> Bool
-es_primo n | n==1 = False
+es_primo 1 = False
 es_primo n = son_coprimos_a n (dos_a_mitad n)
 
 veces_divisible_por :: Integer -> Integer -> Integer
