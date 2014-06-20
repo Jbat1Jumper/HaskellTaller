@@ -63,5 +63,13 @@ polinomio a = Suma (Cte (head a)) (Prod Var (polinomio (tail a)))
 --Ejercicio 3
 --evaluar :: Poli -> Racional -> Racional
 
+evaluarList :: [Racional] -> Racional -> Racional
+evaluarList a b | length a ==1 = head a
+evaluarList a b = sumaR (multR (last a) (multev (tail a) b)) (evaluarList (init a) b)
+
+multev :: [Racional] -> Racional -> Racional
+multev a b | length a > 0 = multR b (multev (tail a) b)
+multev a b = unoR
+
 --Ejercicio 4
 --raicesRacionales :: [Racional] -> [Racional]
