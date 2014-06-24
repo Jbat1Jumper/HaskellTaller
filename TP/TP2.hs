@@ -9,10 +9,10 @@ data Racional = R Integer Integer
 
 instance Show Racional where
 	show (R n d) = (show n) ++ (if d==1 then "" else ("/") ++ (show d))
-	
+
 instance Eq Racional where
 	(R n1 d1) == (R n2 d2) = (n1*d2 == d1*n2)
-	
+
 instance Ord Racional where
 	(R n1 d1) <= (R n2 d2) = (n1*d2 <= n2*d1)
 
@@ -34,7 +34,7 @@ denominador (R n d) = d
 sumaR,multR :: Racional -> Racional -> Racional
 sumaR (R n1 d1) (R n2 d2) = crearR (n1*d2 + n2*d1) (d1*d2)
 multR (R n1 d1) (R n2 d2) = crearR (n1*n2) (d1*d2)
-	
+
 
 data Poli = Cte Racional | Var | Suma Poli Poli | Prod Poli Poli
 
@@ -83,9 +83,26 @@ polinomio :: [Racional] -> Poli
 polinomio [R a b] = Cte (R a b)
 polinomio a = Suma (Cte (head a)) (Prod Var (polinomio (tail a)))
 
+
 --Ejercicio 3
 evaluar :: Poli -> Racional -> Racional
-evaluar a b = evaluarList (coeficientes a) b
+evaluar (Cte r) _ = r
+evaluar Var x = x
+evaluar (Suma a b) x = sumaR (evaluar a x) (evaluar b x)
+evaluar (Prod a b) x = multR (evaluar a x) (evaluar b x)
+
+--Ejercicio 3 otra opcion, por ruffini
+evaluar2 :: Poli -> Racional -> Racional
+evaluar2 p x = ruffini x (head c) (tail c)
+	where c = reverse (coeficientes p)
+
+ruffini :: Racional ->  Racional -> [Racional] -> Racional
+ruffini d r [] = r
+ruffini d r (p:ps) = ruffini d (sumaR (multR r d) p) ps
+
+--Ejercicio 3 otra opcion
+evaluar3 :: Poli -> Racional -> Racional
+evaluar3 a b = evaluarList (coeficientes a) b
 
 evaluarList :: [Racional] -> Racional -> Racional
 evaluarList a b | length a ==1 = head a
@@ -95,21 +112,6 @@ multPorGrado :: [Racional] -> Racional -> Racional
 multPorGrado a b | length a > 0 = multR b (multPorGrado (tail a) b)
 multPorGrado a b = unoR
 
---Ejercicio 3 otra opcion
-evaluar2 :: Poli -> Racional -> Racional
-evaluar2 (Cte r) _ = r
-evaluar2 Var x = x
-evaluar2 (Suma a b) x = sumaR (evaluar2 a x) (evaluar2 b x)
-evaluar2 (Prod a b) x = multR (evaluar2 a x) (evaluar2 b x)
-
---Ejercicio 3 otra opcion, por ruffini
-evaluar3 :: Poli -> Racional -> Racional
-evaluar3 p x = ruffini x (head c) (tail c)
-	where c = reverse (coeficientes p)
-
-ruffini :: Racional ->  Racional -> [Racional] -> Racional
-ruffini d r [] = r
-ruffini d r (p:ps) = ruffini d (sumaR (multR r d) p) ps
 
 --Ejercicio 4
 --Usando el teorema de la raiz racional
