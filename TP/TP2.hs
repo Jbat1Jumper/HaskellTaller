@@ -95,13 +95,29 @@ multPorGrado :: [Racional] -> Racional -> Racional
 multPorGrado a b | length a > 0 = multR b (multPorGrado (tail a) b)
 multPorGrado a b = unoR
 
+--Ejercicio 3 otra opcion
+evaluar2 :: Poli -> Racional -> Racional
+evaluar2 (Cte r) _ = r
+evaluar2 Var x = x
+evaluar2 (Suma a b) x = sumaR (evaluar2 a x) (evaluar2 b x)
+evaluar2 (Prod a b) x = multR (evaluar2 a x) (evaluar2 b x)
+
+--Ejercicio 3 otra opcion, por ruffini
+evaluar3 :: Poli -> Racional -> Racional
+evaluar3 p x = ruffini x (head c) (tail c)
+	where c = reverse (coeficientes p)
+
+ruffini :: Racional ->  Racional -> [Racional] -> Racional
+ruffini d r [] = r
+ruffini d r (p:ps) = ruffini d (sumaR (multR r d) p) ps
 
 --Ejercicio 4
 --Usando el teorema de la raiz racional
 raicesRacionales :: [Racional] -> [Racional]
 raicesRacionales [] = []
 raicesRacionales a | head a == ceroR = sort ( nub( ceroR : raicesRacionales (tail a))) -- caso Ter. Ind. == 0
-raicesRacionales a = sort (nub (evaluarListRaices a (multiplicarPorConst (crearR (-1) 1) posRaices)  ++ evaluarListRaices a posRaices )) where posRaices = (posiblesRaices (posiblesRaicesNum a) (posiblesRaicesDen a))
+raicesRacionales a = sort (nub (evaluarListRaices a (multiplicarPorConst (crearRI (-1)) posRaices)  ++ evaluarListRaices a posRaices )) 
+	where posRaices = (posiblesRaices (posiblesRaicesNum a) (posiblesRaicesDen a))
 
 
 es_divisible_por :: Integer -> Integer -> Bool
